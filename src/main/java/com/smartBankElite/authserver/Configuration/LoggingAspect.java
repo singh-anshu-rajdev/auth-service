@@ -13,7 +13,10 @@ public class LoggingAspect {
 
     private static final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
 
-    @Around("within(com.smartBankElite.authserver.Controller..*) || within(com.smartBankElite.authserver.Service..*) || within(com.smartBankElite.authserver.ServiceImpl..*) || within(com.smartBankElite.authserver.Repositories..*)")
+    @Around("within(com.smartBankElite.authserver.Controller..*) " +
+            "|| within(com.smartBankElite.authserver.Service..*) " +
+            "|| within(com.smartBankElite.authserver.ServiceImpl..*) " +
+            "|| within(com.smartBankElite.authserver.Repositories..*)")
     public Object logExecution(ProceedingJoinPoint joinPoint) throws Throwable {
         String methodName = joinPoint.getSignature().toShortString();
         logger.info("Started execution: {}", methodName);
