@@ -454,7 +454,7 @@ This project is part of the SmartBank Elite System. Contact the development team
 For issues, questions, or contributions:
 - **Repository**: https://github.com/singh-anshu-rajdev/auth-service
 - **Issues**: Report bugs via GitHub Issues
-- **Email**: anshu.singh@smartbank.com
+- **Email**: singh.anshu.rajdev@gmail.com
 
 ## Roadmap
 
