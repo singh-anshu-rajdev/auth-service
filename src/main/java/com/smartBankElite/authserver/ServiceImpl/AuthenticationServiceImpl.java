@@ -7,11 +7,14 @@ import com.smartBankElite.authserver.Model.User;
 import com.smartBankElite.authserver.Repositories.UserRepository;
 import com.smartBankElite.authserver.Service.AuthenticationService;
 import com.smartBankElite.authserver.Service.JwtService;
+import com.smartBankElite.authserver.Utils.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -28,19 +31,28 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Autowired
     private JwtService jwtService;
 
+    @Autowired
+    private EmailService emailService;
+
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public RegisterUserDto signup(RegisterUserDto input) {
-        User user = new User();
-        user.setUserName(input.getUserName());
+        try{
+            User user = new User();
+            user.setUserName(input.getUserName());
 
-        user.setFullName(input.getFullName());
-        user.setEmailId(input.getEmail());
-        user.setDeletedFlag(Boolean.FALSE);
-        user.setPassword(passwordEncoder.encode(input.getPassword()));
+            user.setFullName(input.getFullName());
+            user.setEmailId(input.getEmail());
+            user.setDeletedFlag(Boolean.FALSE);
+            user.setPassword(passwordEncoder.encode(input.getPassword()));
 
-        User registeredUser =  userRepository.save(user);
-        input.setId(registeredUser.getId());
-        return input;
+            User registeredUser =  userRepository.save(user);
+            input.setId(registeredUser.getId());
+            emailService.sendUserCreationEmail(input);
+            return input;
+        }catch (Exception e){
+            throw new RuntimeException("Error occurred during user registration: " + e.getMessage(), e);
+        }
     }
 
     @Override
